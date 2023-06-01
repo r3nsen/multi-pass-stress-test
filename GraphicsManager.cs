@@ -18,9 +18,7 @@ namespace multi_pass_stress_test
         int vertexCount = 0, indexCount = 0;
 
         RasterizerState rast = new RasterizerState { CullMode = CullMode.None, FillMode = FillMode.Solid };
-
-        VertexBuffer vb;
-        IndexBuffer ib;
+        BlendState blend;// = new BlendState() { };
 
         public RenderTarget2D[] swap_tex = new RenderTarget2D[2];
         public int swap_index = 0;
@@ -31,6 +29,8 @@ namespace multi_pass_stress_test
             graphicsD.SamplerStates[0] = SamplerState.PointClamp;
             vertex = new VertexPositionColorTexture[4];
             index = new short[6];
+            blend= new BlendState();
+            //blend.
             //vb = new VertexBuffer(graphicsD, typeof(VertexPositionColorTexture),4, BufferUsage.WriteOnly);
             //ib = new IndexBuffer(graphicsD, typeof(short), 6, BufferUsage.WriteOnly);
             //graphicsD.SetVertexBuffer(vb);
@@ -51,14 +51,14 @@ namespace multi_pass_stress_test
 
             if (swap_tex[0] == null)
             {
-                swap_tex[0] = new RenderTarget2D(graphicsD, (int)size.X, (int)size.Y);
-                swap_tex[1] = new RenderTarget2D(graphicsD, (int)size.X, (int)size.Y);
+                swap_tex[0] = new RenderTarget2D(graphicsD, (int)size.X, (int)size.Y, false, SurfaceFormat.Color, DepthFormat.None);
+                swap_tex[1] = new RenderTarget2D(graphicsD, (int)size.X, (int)size.Y, false, SurfaceFormat.Color, DepthFormat.None);
             }
 
         }
         public void draw(Vector2 pos, Vector2 size, Color cor)
         {
-            vertexCount = indexCount = 0;
+            //vertexCount = indexCount = 0;
             EnsureSpace(6, 4);
 
             index[indexCount++] = (short)(vertexCount + 0);
@@ -79,36 +79,26 @@ namespace multi_pass_stress_test
                 * Matrix.CreateTranslation(new Vector3(pos, 0));
 
             for (int i = vertexCount - 4; i < vertexCount; i++)
-                Vector3.Transform(ref vertex[i].Position, ref world, out vertex[i].Position);
-
-            vb = new VertexBuffer(graphicsD, typeof(VertexPositionColorTexture), 4, BufferUsage.WriteOnly);
-            ib = new IndexBuffer(graphicsD, typeof(short), 6, BufferUsage.WriteOnly);
-
-            vb.SetData(vertex);
-            ib.SetData(index);
-
-            graphicsD.SetVertexBuffer(vb);
-            graphicsD.Indices = ib;
-
+                Vector3.Transform(ref vertex[i].Position, ref world, out vertex[i].Position);           
         }
         public void pre_flush(RenderTarget2D srt = null, RenderTarget2D drt = null)
         {
             graphicsD.RasterizerState = rast;
-            graphicsD.BlendState = BlendState.NonPremultiplied;
+            graphicsD.BlendState = blend;
             if (srt != null)
                 effect.Parameters["tex"].SetValue(srt);
             graphicsD.SetRenderTarget(drt);
-
-            //if (vertexCount == 0) return;
+            graphicsD.Clear(Color.Transparent);
+            if (vertexCount == 0) return;
 
             effect.CurrentTechnique.Passes[0].Apply();
 
-            //graphicsD.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertex, 0, vertexCount, index, 0, indexCount / 3);
-            graphicsD.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 2);
-            //vertexCount = indexCount = 0;
+            graphicsD.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertex, 0, vertexCount, index, 0, indexCount / 3);
+            //graphicsD.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 2);
+            vertexCount = indexCount = 0;
             if (drt != null)
                 graphicsD.SetRenderTarget(null);
-            print("img.png", drt);
+            //print("img.png", drt);
             //flush_text();
 
         }
@@ -121,20 +111,21 @@ namespace multi_pass_stress_test
         public void flush()
         {
             graphicsD.RasterizerState = rast;
-            graphicsD.BlendState = BlendState.NonPremultiplied;
+            graphicsD.BlendState = BlendState.Additive;
             effect.Parameters["tex"].SetValue(swap_tex[swap_index++]);
             graphicsD.SetRenderTarget(swap_tex[swap_index %= 2]);
+            graphicsD.Clear(Color.Transparent);
 
-            //if (vertexCount == 0) return;
+            if (vertexCount == 0) return;
 
             effect.CurrentTechnique.Passes[0].Apply();
 
-            //graphicsD.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertex, 0, vertexCount, index, 0, indexCount / 3);
-            graphicsD.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 2);
-            //vertexCount = indexCount = 0;
+           graphicsD.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertex, 0, vertexCount, index, 0, indexCount / 3);
+           // graphicsD.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 2);
+            vertexCount = indexCount = 0;
             graphicsD.SetRenderTarget(null);
             //flush_text();
-            print("img.png", swap_tex[swap_index]);
+            //print("img.png", swap_tex[swap_index]);
 
         }
         private void EnsureSpace(int indexSpace, int vertexSpace)
