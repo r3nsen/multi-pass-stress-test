@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33103.184
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "multi-pass stress test", "multi-pass stress test.csproj", "{677CFC2C-FE62-4FE9-B980-D26C19CDE391}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{677CFC2C-FE62-4FE9-B980-D26C19CDE391}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{677CFC2C-FE62-4FE9-B980-D26C19CDE391}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{677CFC2C-FE62-4FE9-B980-D26C19CDE391}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{677CFC2C-FE62-4FE9-B980-D26C19CDE391}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {49C88DB0-A0ED-4388-AA10-96AF93ECE01A}
+	EndGlobalSection
+EndGlobal

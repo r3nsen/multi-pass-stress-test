@@ -1,0 +1,4 @@
+Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
+"C:/Users/renat/OneDrive/Documentos/projetos/multi-pass stress test/Content/effect.fx","C:/Users/renat/OneDrive/Documentos/projetos/multi-pass stress test/Content/bin/DesktopGL/effect.xnb","EffectProcessor","CompiledEffectContent",1352,1959,0,3060466
+"C:/Users/renat/OneDrive/Documentos/projetos/multi-pass stress test/Content/font.png","C:/Users/renat/OneDrive/Documentos/projetos/multi-pass stress test/Content/bin/DesktopGL/font.xnb","TextureProcessor","Texture2DContent",57228,186709,0,0459684
+"C:/Users/renat/OneDrive/Documentos/projetos/multi-pass stress test/Content/text.fx","C:/Users/renat/OneDrive/Documentos/projetos/multi-pass stress test/Content/bin/DesktopGL/text.xnb","EffectProcessor","CompiledEffectContent",2216,1480,0,215693
