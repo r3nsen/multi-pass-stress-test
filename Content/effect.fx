@@ -40,8 +40,8 @@ VertexShaderOutput MainVS(in VertexShaderInput input)
 }
 
 float4 MainPS(VertexShaderOutput input) : COLOR
-{	
-	return tex2D(texture_sampler, input.tex) * input.col;
+{
+	return tex2D(texture_sampler, input.tex);// *input.col;
 }
 
 technique BasicColorDrawing
