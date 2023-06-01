@@ -29,8 +29,13 @@ namespace multi_pass_stress_test
             graphicsD.SamplerStates[0] = SamplerState.PointClamp;
             vertex = new VertexPositionColorTexture[4];
             index = new short[6];
-            blend= new BlendState();
-            //blend.
+            blend = new BlendState()
+            {
+                ColorSourceBlend = Blend.DestinationAlpha,
+                ColorDestinationBlend = Blend.InverseDestinationAlpha,
+                AlphaBlendFunction = BlendFunction.Add,
+            };
+            blend = BlendState.Additive;
             //vb = new VertexBuffer(graphicsD, typeof(VertexPositionColorTexture),4, BufferUsage.WriteOnly);
             //ib = new IndexBuffer(graphicsD, typeof(short), 6, BufferUsage.WriteOnly);
             //graphicsD.SetVertexBuffer(vb);
@@ -79,7 +84,7 @@ namespace multi_pass_stress_test
                 * Matrix.CreateTranslation(new Vector3(pos, 0));
 
             for (int i = vertexCount - 4; i < vertexCount; i++)
-                Vector3.Transform(ref vertex[i].Position, ref world, out vertex[i].Position);           
+                Vector3.Transform(ref vertex[i].Position, ref world, out vertex[i].Position);
         }
         public void pre_flush(RenderTarget2D srt = null, RenderTarget2D drt = null)
         {
@@ -88,7 +93,7 @@ namespace multi_pass_stress_test
             if (srt != null)
                 effect.Parameters["tex"].SetValue(srt);
             graphicsD.SetRenderTarget(drt);
-            graphicsD.Clear(Color.Transparent);
+            graphicsD.Clear(Color.Black);
             if (vertexCount == 0) return;
 
             effect.CurrentTechnique.Passes[0].Apply();
@@ -120,8 +125,8 @@ namespace multi_pass_stress_test
 
             effect.CurrentTechnique.Passes[0].Apply();
 
-           graphicsD.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertex, 0, vertexCount, index, 0, indexCount / 3);
-           // graphicsD.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 2);
+            graphicsD.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertex, 0, vertexCount, index, 0, indexCount / 3);
+            // graphicsD.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 2);
             vertexCount = indexCount = 0;
             graphicsD.SetRenderTarget(null);
             //flush_text();

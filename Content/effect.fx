@@ -3,8 +3,8 @@
 #define VS_SHADERMODEL vs_3_0
 #define PS_SHADERMODEL ps_3_0
 #else
-#define VS_SHADERMODEL vs_4_0//_level_9_1
-#define PS_SHADERMODEL ps_4_0//_level_9_1
+#define VS_SHADERMODEL vs_5_0//_level_9_1
+#define PS_SHADERMODEL ps_5_0//_level_9_1
 #endif
 
 matrix WorldViewProjection;
@@ -41,7 +41,9 @@ VertexShaderOutput MainVS(in VertexShaderInput input)
 
 float4 MainPS(VertexShaderOutput input) : COLOR
 {
-	return tex2D(texture_sampler, input.tex);// *input.col;
+	float4 col = tex2D(texture_sampler, input.tex);
+	//col.a = .5;
+	return col;// *input.col;
 }
 
 technique BasicColorDrawing
