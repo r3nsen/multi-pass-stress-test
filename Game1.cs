@@ -18,7 +18,7 @@ namespace multi_pass_stress_test
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
             _graphics.SynchronizeWithVerticalRetrace = false;
-            IsFixedTimeStep = false;
+            // IsFixedTimeStep = false;
             _graphics.GraphicsProfile = GraphicsProfile.HiDef;
         }
 
@@ -35,8 +35,9 @@ namespace multi_pass_stress_test
             _gm.text_effect = Content.Load<Effect>("text");
             _gm.text_effect.Parameters["tex"].SetValue(FontManager.tex);
 
-                _gm.begin(Vector2.Zero, new Vector2(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight));
+            _gm.begin(Vector2.Zero, new Vector2(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight));
             _gm.draw(Vector2.Zero, new Vector2(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight), Color.White);
+            _gm.effect.Parameters["tex"].SetValue(Content.Load<Texture2D>("hk"));
             _gm.pre_flush(null, _gm.swap_tex[_gm.swap_index]);
         }
 
@@ -57,28 +58,32 @@ namespace multi_pass_stress_test
             float x = 100 + (float)Math.Sin(gameTime.TotalGameTime.TotalMilliseconds * .001) * 50;
             float y = 100 + (float)Math.Sin(gameTime.TotalGameTime.TotalMilliseconds * .001 + 1) * 50;
 
-            Vector2 orig= Vector2.Zero;
+            Vector2 orig = Vector2.Zero;
             Vector2 size = new Vector2(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
 
-            _gm.begin(orig, size);
-            _gm.draw(orig, size, Color.White);
-            for (int i = 0; i < 10000; i++)
+            //_gm.begin(orig, size);
+            //_gm.draw(orig, size, Color.White);            
+            bool space = Keyboard.GetState().IsKeyDown(Keys.Space);
+            for (int i = 0; i < 1 && space; i++)
             {
-                _gm.flush();
+                _gm.flush(i);
             }
 
-            _gm.pre_flush(_gm.swap_tex[_gm.swap_index]);
-            fpstimer += gameTime.ElapsedGameTime.TotalMilliseconds;
-            fpscounter++;
-            if (fpstimer > 1000)
-            {
+            _gm.show_flush(_gm.swap_tex[_gm.swap_index]);
 
-                fpstext = $"media: {1000f / (fpstimer / fpscounter)} last: {1000f / gameTime.ElapsedGameTime.TotalMilliseconds}";
-                fpstimer -= 1000;
-                fpscounter = 0;
+            if (false)
+            {
+                fpstimer += gameTime.ElapsedGameTime.TotalMilliseconds;
+                fpscounter++;
+                if (fpstimer > 1000)
+                {
+                    fpstext = $"media: {1000f / (fpstimer / fpscounter)}";// last: {1000f / gameTime.ElapsedGameTime.TotalMilliseconds}";
+                    fpstimer -= 1000;
+                    fpscounter = 0;
+                }
+                _gm.DrawString(fpstext, new Vector2(50, 50), 1, .5f);
+                _gm.flush_text();
             }
-            _gm.DrawString(fpstext, new Vector2(50, 50), 1, .5f);
-            _gm.flush_text();
             base.Draw(gameTime);
         }
     }

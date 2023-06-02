@@ -28,7 +28,7 @@ namespace multi_pass_stress_test
         public GraphicsManager(GraphicsDevice graphicsDevice)
         {
             graphicsD = graphicsDevice;
-            graphicsD.SamplerStates[0] = SamplerState.PointClamp;
+            graphicsD.SamplerStates[0] = SamplerState.PointWrap;
             vertex = new VertexPositionColorTexture[4];
             index = new short[6];
             //vb = new VertexBuffer(graphicsD, typeof(VertexPositionColorTexture),4, BufferUsage.WriteOnly);
@@ -46,13 +46,13 @@ namespace multi_pass_stress_test
             Matrix.CreateLookAt(ref orig, ref target, ref up, out view);
             Matrix.CreateOrthographicOffCenter(pos.X, pos.X + size.X, pos.Y + size.Y, pos.Y, -100, 100, out projection);
             effect.Parameters["WorldViewProjection"].SetValue(view * projection);
-            effect.Parameters["tex"].SetValue(FontManager.tex);
+            //effect.Parameters["tex"].SetValue(FontManager.tex);
             text_effect.Parameters["WorldViewProjection"].SetValue(view * projection);
 
             if (swap_tex[0] == null)
             {
-                swap_tex[0] = new RenderTarget2D(graphicsD, (int)size.X, (int)size.Y);
-                swap_tex[1] = new RenderTarget2D(graphicsD, (int)size.X, (int)size.Y);
+                swap_tex[0] = new RenderTarget2D(graphicsD, (int)size.X, (int)size.Y, false, SurfaceFormat.Vector4, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
+                swap_tex[1] = new RenderTarget2D(graphicsD, (int)size.X, (int)size.Y, false, SurfaceFormat.Vector4, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
             }
 
         }
@@ -73,8 +73,7 @@ namespace multi_pass_stress_test
             vertex[vertexCount++] = new VertexPositionColorTexture(new Vector3(0, 1, 0), cor, new Vector2(0, 1));
             vertex[vertexCount++] = new VertexPositionColorTexture(new Vector3(1, 1, 0), cor, new Vector2(1, 1));
 
-            Matrix world = //Matrix.CreateTranslation(new Vector3(-.5f, -.5f, 0))
-                           //* Matrix.CreateRotationZ(MathHelper.PiOver2 * flipX)
+            Matrix world =
                 Matrix.CreateScale(new Vector3(size, 1))
                 * Matrix.CreateTranslation(new Vector3(pos, 0));
 
@@ -88,16 +87,16 @@ namespace multi_pass_stress_test
             ib.SetData(index);
 
             graphicsD.SetVertexBuffer(vb);
-            graphicsD.Indices = ib;
-
+            graphicsD.Indices = ib;            
         }
         public void pre_flush(RenderTarget2D srt = null, RenderTarget2D drt = null)
         {
             graphicsD.RasterizerState = rast;
-            graphicsD.BlendState = BlendState.NonPremultiplied;
+            graphicsD.BlendState = BlendState.Opaque;
             if (srt != null)
                 effect.Parameters["tex"].SetValue(srt);
             graphicsD.SetRenderTarget(drt);
+            graphicsD.Clear(Color.Black);
 
             //if (vertexCount == 0) return;
 
@@ -107,8 +106,34 @@ namespace multi_pass_stress_test
             graphicsD.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 2);
             //vertexCount = indexCount = 0;
             if (drt != null)
+            {
                 graphicsD.SetRenderTarget(null);
-            print("img.png", drt);
+                 // print("img.png", drt);
+            }
+            //flush_text();
+
+        }
+        public void show_flush(RenderTarget2D srt = null, RenderTarget2D drt = null)
+        {
+            graphicsD.RasterizerState = rast;
+            graphicsD.BlendState = BlendState.Opaque;
+            if (srt != null)
+                effect.Parameters["tex"].SetValue(srt);
+            graphicsD.SetRenderTarget(drt);
+            graphicsD.Clear(Color.Black);
+
+            //if (vertexCount == 0) return;
+
+            effect.CurrentTechnique.Passes[2].Apply();
+
+            //graphicsD.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertex, 0, vertexCount, index, 0, indexCount / 3);
+            graphicsD.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 2);
+            //vertexCount = indexCount = 0;
+            if (drt != null)
+            {
+                graphicsD.SetRenderTarget(null);
+                // print("img.png", drt);
+            }
             //flush_text();
 
         }
@@ -118,24 +143,17 @@ namespace multi_pass_stress_test
             tex.SaveAsPng(s, tex.Width, tex.Height);
             s.Close();
         }
-        public void flush()
+        public void flush(int i)
         {
-            graphicsD.RasterizerState = rast;
-            graphicsD.BlendState = BlendState.NonPremultiplied;
-            effect.Parameters["tex"].SetValue(swap_tex[swap_index++]);
-            graphicsD.SetRenderTarget(swap_tex[swap_index %= 2]);
-
-            //if (vertexCount == 0) return;
-
-            effect.CurrentTechnique.Passes[0].Apply();
-
-            //graphicsD.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertex, 0, vertexCount, index, 0, indexCount / 3);
+            effect.Parameters["tex"].SetValue(swap_tex[swap_index]);
+            swap_index = (swap_index + 1) % 2;
+            graphicsD.SetRenderTarget(swap_tex[swap_index]);
+            graphicsD.Clear(Color.Black);
+            //if (i == 0)
+            effect.CurrentTechnique.Passes[1].Apply();
             graphicsD.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 2);
-            //vertexCount = indexCount = 0;
             graphicsD.SetRenderTarget(null);
-            //flush_text();
-            print("img.png", swap_tex[swap_index]);
-
+            // print("img.png", swap_tex[swap_index]);         
         }
         private void EnsureSpace(int indexSpace, int vertexSpace)
         {

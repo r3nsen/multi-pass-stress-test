@@ -269,10 +269,10 @@ namespace multi_pass_stress_test
                 text_index[text_indexCount++] = (short)(text_vertexCount + 3);
                 text_index[text_indexCount++] = (short)(text_vertexCount + 2);
 
-                text_vertex[text_vertexCount++] = new VertexPositionColorTexture(new Vector3(0, 0, z), Color.White, new Vector2(_x, _y));
-                text_vertex[text_vertexCount++] = new VertexPositionColorTexture(new Vector3(1, 0, z), Color.White, new Vector2(_w, _y));
-                text_vertex[text_vertexCount++] = new VertexPositionColorTexture(new Vector3(0, 1, z), Color.White, new Vector2(_x, _h));
-                text_vertex[text_vertexCount++] = new VertexPositionColorTexture(new Vector3(1, 1, z), Color.White, new Vector2(_w, _h));
+                text_vertex[text_vertexCount++] = new VertexPositionColorTexture(new Vector3(0, 0, z), Color.Yellow, new Vector2(_x, _y));
+                text_vertex[text_vertexCount++] = new VertexPositionColorTexture(new Vector3(1, 0, z), Color.Yellow, new Vector2(_w, _y));
+                text_vertex[text_vertexCount++] = new VertexPositionColorTexture(new Vector3(0, 1, z), Color.Yellow, new Vector2(_x, _h));
+                text_vertex[text_vertexCount++] = new VertexPositionColorTexture(new Vector3(1, 1, z), Color.Yellow, new Vector2(_w, _h));
                 float w = glyph.planeBounds.right - glyph.planeBounds.left, h = glyph.planeBounds.top - glyph.planeBounds.bottom;
                 currentOff.X += glyph.planeBounds.left * Size;
                 currentOff.Y -= glyph.planeBounds.bottom * Size;

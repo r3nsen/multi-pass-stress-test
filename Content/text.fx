@@ -62,8 +62,8 @@ float4 textRenderPS(VertexShaderOutput input) : COLOR
 		
 		w = smoothstep(.7, .1, w); // .7, .3
 		
-		float4 col = w;
-		col.rgb = input.col;
+		float4 col = 1;// w;
+		col.rgb = input.col * w;
 		col.rgba;
 		return col;
 }

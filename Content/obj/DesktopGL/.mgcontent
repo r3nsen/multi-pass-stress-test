@@ -4,8 +4,8 @@
   <Platform>DesktopGL</Platform>
   <Config />
   <SourceFiles>
-    <File>C:/Users/renat/OneDrive/Documentos/projetos/multi-pass stress test/Content/effect.fx</File>
     <File>C:/Users/renat/OneDrive/Documentos/projetos/multi-pass stress test/Content/font.png</File>
+    <File>C:/Users/renat/OneDrive/Documentos/projetos/multi-pass stress test/Content/hk.jpg</File>
     <File>C:/Users/renat/OneDrive/Documentos/projetos/multi-pass stress test/Content/text.fx</File>
   </SourceFiles>
   <DestFiles>
