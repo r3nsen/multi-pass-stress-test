@@ -38,6 +38,7 @@ namespace multi_pass_stress_test
             _gm.begin(Vector2.Zero, new Vector2(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight));
             _gm.draw(Vector2.Zero, new Vector2(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight), Color.White);
             _gm.effect.Parameters["tex"].SetValue(Content.Load<Texture2D>("hk"));
+            _gm.effect.Parameters["sky"].SetValue(Content.Load<Texture2D>("hk"));
             _gm.pre_flush(null, _gm.swap_tex[_gm.swap_index]);
         }
 
@@ -63,7 +64,7 @@ namespace multi_pass_stress_test
 
             //_gm.begin(orig, size);
             //_gm.draw(orig, size, Color.White);            
-            bool space = Keyboard.GetState().IsKeyDown(Keys.Space);
+            bool space = true;// Keyboard.GetState().IsKeyDown(Keys.Space);
             for (int i = 0; i < 1 && space; i++)
             {
                 _gm.flush(i);

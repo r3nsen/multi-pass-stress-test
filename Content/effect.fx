@@ -9,10 +9,14 @@
 
 matrix WorldViewProjection;
 
-Texture2D tex;
+Texture2D tex, sky;
 sampler2D texture_sampler = sampler_state
 {
 	Texture = <tex>;
+};
+sampler2D sky_sampler = sampler_state
+{
+	Texture = <sky>;
 };
 
 struct VertexShaderInput
@@ -57,7 +61,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 
 	float2 size = 1. / float2(800., 480.);
 	float speed_force = .65;
-	float damp = 1.;
+	float damp = .99;
 
 	float4 col = tex2D(texture_sampler, input.tex);
 
@@ -85,18 +89,29 @@ float4 CopyPS(VertexShaderOutput input) : COLOR
 }
 float4 ShowPS(VertexShaderOutput input) : COLOR
 {
-	float4 col = tex2D(texture_sampler, input.tex);
-	//col.xy = abs(col.xy);
-	//col.x *= .1;
-	//col.x = col.x * col.x * col.x * .25;// *.1;
-	//col.y *= .0;
-	//col.z =  -col.x;
-	col.rgb += .5;
-	col.x = col.x * col.x + .2;// *.1;
+	//float4 col = tex2D(texture_sampler, input.tex);
+	////col.xy = abs(col.xy);
+	////col.x *= .1;
+	////col.x = col.x * col.x * col.x * .25;// *.1;
+	////col.y *= .0;
+	////col.z =  -col.x;
+	//col.rgb += .5;
+	//col.x = col.x * col.x + .2;// *.1;
 
-	col.g = 0;
-		col.b =col.b *.2 + .2;
-	//col.b = 1. - col.r;
+	//col.g = 0;
+	//	col.b =col.b *.2 + .2;
+	////col.b = 1. - col.r;
+	float2 size = 1. / float2(800., 480.);
+	float4 scol = tex2D(texture_sampler, input.tex);
+	float4 scolx = tex2D(texture_sampler, input.tex - float2(1., 0.) * size);
+	float4 scoly = tex2D(texture_sampler, input.tex - float2(0., 1.) * size);
+
+	float2 dd = float2(scolx.x - scol.x, scoly.x - scol.x) / size;//float2(ddx(scol).x, ddy(scol).y);
+	float4 col = tex2D(sky_sampler, input.tex + dd * size);
+	col.rgb += saturate(dot(dd, .5)) *.08;
+	//col.xy = dd;
+	//col.z *= .01;
+
 	return col;
 }
 
